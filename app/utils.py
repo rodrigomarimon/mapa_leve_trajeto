@@ -131,7 +131,7 @@ def create_map(df):
     mapa = folium.Map(location=[df['Latitude'].mean(), df['Longitude'].mean()], zoom_start=12)
 
     # Adicionando diferentes camadas de mapa com atribuições corretas
-    folium.TileLayer('openstreetmap', name='OpenStreetMap').add_to(mapa)
+    # folium.TileLayer('openstreetmap', name='OpenStreetMap').add_to(mapa)
     folium.TileLayer(
         tiles='https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
         attr='Google Maps Hybrid',
@@ -144,7 +144,10 @@ def create_map(df):
     heat_map.add_to(mapa)
 
     # Criando uma camada para o trajeto
-    trajeto_layer = folium.FeatureGroup(name='Trajeto', control=False)
+    trajeto_layer = folium.FeatureGroup(name='Trajeto')
+
+    # camada marcadores
+    marcadores_layer = folium.FeatureGroup(name='Marcadores')
 
     # Adicionando marcadores e linha do trajeto
     coordenadas = []
@@ -162,8 +165,8 @@ def create_map(df):
             folium.Marker(
                 location=[row['Latitude'], row['Longitude']],
                 popup=folium.Popup(popup_html, max_width=300),
-                icon=folium.Icon(color='blue', icon='info-sign')
-            ).add_to(trajeto_layer)
+                # icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(marcadores_layer)
             ultimo_tempo = row['DateTime']
 
     # Adicionando a linha do trajeto
@@ -171,6 +174,7 @@ def create_map(df):
 
     # Adicionando a camada de trajeto ao mapa
     trajeto_layer.add_to(mapa)
+    marcadores_layer.add_to(mapa)
 
     # Adicionando o controle de camadas
     folium.LayerControl().add_to(mapa)
